@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.syncitgroup:android-AthenaXAILibrary:1.0'
+    implementation 'com.github.syncitgroup:android-AthenaXAILibrary:1.1'
 }
 ```
 
@@ -27,7 +27,7 @@ dependencies {
 <dependency>
     <groupId>com.github.syncitgroup</groupId>
     <artifactId>android-AthenaXAILibrary</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
