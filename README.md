@@ -1,4 +1,15 @@
-:zap: A powerful & easy to use library for Athena XAI :zap:
+# :zap: Athena XAI :zap:
+
+**Athena XAI is a human-centric, explainable, AI platform that prioritizes user needs, improves their satisfaction and engagement with eCommerce stores, provides clear insights into the decision-making process, and dynamically provides personalized experiences based on individual users’ needs.**
+
+Athena XAI Android Library consists of:
+
+* Advanced Search
+* Category Navigation
+* Visual Search
+* Analytics
+
+Website: [**Athena XAI**](https://a-x.ai/)
 
 [**Athena XAI**](https://github.com/syncitgroup/mobile-AthenaXAILibrary) is the iOS version of this library
 

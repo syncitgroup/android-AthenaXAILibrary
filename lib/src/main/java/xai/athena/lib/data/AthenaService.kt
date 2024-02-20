@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import android.util.LruCache
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
@@ -60,6 +61,16 @@ class AthenaService: AthenaRepository {
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
+
+    /**
+     * Provide custom interceptors to Http client
+     * Must be called before setup()
+     */
+    fun addInterceptor(interceptor: Interceptor) {
+        if (!okHttpClient.interceptors().contains(interceptor)) {
+            okHttpClient.addInterceptor(interceptor)
+        }
+    }
 
     /**
      * Setup athena with token and baseUrl
