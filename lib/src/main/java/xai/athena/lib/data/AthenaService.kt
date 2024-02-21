@@ -26,6 +26,7 @@ import xai.athena.lib.image.BackgroundRemover
 import xai.athena.lib.image.compressBitmap
 import xai.athena.lib.image.convertBitmapToBase64
 import xai.athena.lib.image.getBitmapFromUri
+import xai.athena.lib.image.getImageExtension
 import xai.athena.lib.image.getResizedBitmap
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.Throws
@@ -36,9 +37,12 @@ import kotlin.jvm.Throws
 class AthenaService: AthenaRepository {
 
     companion object {
-        private const val API_NOT_IMPLEMENTED_MESSAGE = "An Api Service is not implemented. Please call setup() function first."
-        private const val TAG = "AthenaService"
+        private const val MAXIMUM_FILE_SIZE_IN_BYTES = 31_457_280
         private const val IMAGE_RESIZE_WIDTH = 1000
+        private const val API_NOT_IMPLEMENTED_MESSAGE = "An Api Service is not implemented. Please call setup() function first."
+        private const val INVALID_FORMAT_EXCEPTION = "Supported image formats are jpg, jpeg, png, and heic."
+        private const val FILE_TOO_LARGE_EXCEPTION = "Selected image is too large. Limit: $MAXIMUM_FILE_SIZE_IN_BYTES bytes."
+        private const val TAG = "AthenaService"
 
         private const val IS_BACKGROUND_REMOVAL_ENABLED = false // Determine if the background of the image will be removed by MLKit or not
     }
@@ -96,7 +100,7 @@ class AthenaService: AthenaRepository {
         api = retrofit?.create(AthenaApi::class.java)
     }
 
-    @Throws(HttpException::class, NotImplementedError::class, RuntimeException::class)
+    @Throws(HttpException::class, NotImplementedError::class, RuntimeException::class, IllegalArgumentException::class)
     override suspend fun postVisualSearch(
         token: String,
         image: Bitmap,
@@ -133,6 +137,10 @@ class AthenaService: AthenaRepository {
             Log.e(TAG, "Image background is removed, converting to Base64...")
         }
 
+        if (bitmap.byteCount > MAXIMUM_FILE_SIZE_IN_BYTES) {
+            throw IllegalArgumentException(FILE_TOO_LARGE_EXCEPTION)
+        }
+
         val imageBase64 = convertBitmapToBase64(bitmap)
         Log.e(TAG, "Base64: $imageBase64")
 
@@ -148,7 +156,7 @@ class AthenaService: AthenaRepository {
         )
     }
 
-    @Throws(HttpException::class, NotImplementedError::class, RuntimeException::class)
+    @Throws(HttpException::class, NotImplementedError::class, RuntimeException::class, IllegalArgumentException::class)
     override suspend fun postVisualSearch(
         contentResolver: ContentResolver,
         token: String,
@@ -175,6 +183,11 @@ class AthenaService: AthenaRepository {
             )
         }
 
+        val fileExtension = getImageExtension(contentResolver, image).lowercase()
+        if (!isValidExtension(fileExtension)) {
+            throw IllegalArgumentException(INVALID_FORMAT_EXCEPTION)
+        }
+
         Log.e(TAG, "Image processing start...")
         var bitmap = getBitmapFromUri(contentResolver = contentResolver, imageUri = image)
         Log.e(TAG, "Bitmap size before processing: ${(bitmap.byteCount * 1.0f) / 1024} KB")
@@ -187,6 +200,10 @@ class AthenaService: AthenaRepository {
             Log.e(TAG, "Background removing start...")
             bitmap = BackgroundRemover.bitmapForProcessing(bitmap, trimEmptyPart = false)
             Log.e(TAG, "Image background is removed, converting to Base64... Bitmap size: ${(bitmap.byteCount * 1.0f) / 1024} KB")
+        }
+
+        if (bitmap.byteCount > MAXIMUM_FILE_SIZE_IN_BYTES) {
+            throw IllegalArgumentException(FILE_TOO_LARGE_EXCEPTION)
         }
 
         val imageBase64 = convertBitmapToBase64(bitmap)
@@ -404,6 +421,10 @@ class AthenaService: AthenaRepository {
         } catch (e: HttpException) {
             throw e
         }
+    }
+
+    private fun isValidExtension(fileExtension: String): Boolean {
+        return fileExtension == "jpg" || fileExtension == "jpeg" || fileExtension == "png" || fileExtension == "heic"
     }
 
 }

@@ -11,9 +11,30 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Base64
+import android.webkit.MimeTypeMap
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.File
 import kotlin.math.roundToInt
+
+/**
+ * Returns an image extension from Uri
+ */
+internal fun getImageExtension(resolver: ContentResolver, uri: Uri): String {
+    //Check uri format to avoid null
+    val extension: String? = if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+        //If scheme is a content
+        val mime = MimeTypeMap.getSingleton()
+        mime.getExtensionFromMimeType(resolver.getType(uri))
+    } else {
+        //If scheme is a File
+        //This will replace white spaces with %20 and also other special characters. This will avoid returning null values on file name with spaces and special characters.
+        uri.path?.let {
+            MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(File(it)).toString())
+        }
+    }
+    return extension ?: ""
+}
 
 /**
  * Merges two bitmaps by drawing them on a canvas

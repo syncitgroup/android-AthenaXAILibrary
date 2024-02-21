@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.syncitgroup:android-AthenaXAILibrary:1.1'
+    implementation 'com.github.syncitgroup:android-AthenaXAILibrary:1.2'
 }
 ```
 
