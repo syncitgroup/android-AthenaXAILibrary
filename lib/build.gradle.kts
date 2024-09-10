@@ -70,7 +70,7 @@ afterEvaluate {
 
                 groupId = "com.github.syncitgroup"
                 artifactId = "android-AthenaXAILibrary"
-                version = "1.2"
+                version = "1.3"
             }
         }
     }

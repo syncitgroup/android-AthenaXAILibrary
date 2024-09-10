@@ -11,5 +11,5 @@ data class LandingProductsDto(
     @SerializedName("sorters") val sorters: List<SorterDto>? = null,
     @SerializedName("orders") val orders: List<OrderDto>? = null,
     @SerializedName("pager") val pager: List<PagerDto>? = null,
-    @SerializedName("visual_filter") val visualFilter: List<SearchFilterDto>? = null,
+    //@SerializedName("visual_filter") val visualFilter: List<SearchFilterDto>? = null,
 )
